@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Recognition Example</title>
+    <link href="tempalteStyleSheet.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Speech Recognition Example</h1>
+    <button id="startButton">Start Recording</button>
+    <div id="transcription"></div>
+
+    <script>
+
+        class SpeechRecognizer {
+            constructor() {
+                // Initialize speech recognition API
+                this.speechRecognition = new webkitSpeechRecognition();
+                this.speechRecognition.continuous = true;
+                this.speechRecognition.interimResults = false;
+                this.speechRecognition.lang = 'en-US';
+            }
+
+            // Method to transcribe audio
+            transcribeAudio(audioStream) {
+                return new Promise((resolve, reject) => {
+                    // Convert audio stream to Blob
+                    const mediaRecorder = new MediaRecorder(audioStream);
+                    const chunks = [];
+                    mediaRecorder.ondataavailable = (event) => {
+                        chunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'audio/wav' });
+                        const audioUrl = URL.createObjectURL(blob);
+
+                        // Use the audio URL for transcription
+                        const audio = new Audio(audioUrl);
+                        audio.play()
+                        
+                        // Transcribe the audio
+                        transcribe(blob)
+                            .then(transcription => {
+                                // Display the transcription on the screen
+                                const transcriptionElement = document.getElementById('transcription');
+                                transcriptionElement.textContent += transcription + ' ';
+
+                                // Resolve the promise
+                                resolve(transcription);
+                            })
+                            .catch(error => {
+                                // Handle transcription error
+                                reject(error);
+                            });
+                    };
+
+                    // Start recording
+                    mediaRecorder.start();
+
+                    // Continuously transcribe while recording
+                    mediaRecorder.ondataavailable = (event) => {
+                        chunks.push(event.data);
+                        transcribe(new Blob(chunks, { type: 'audio/wav' }))
+                            .then(transcription => {
+                                // Display the transcription on the screen
+                                const transcriptionElement = document.getElementById('transcription');
+                                transcriptionElement.textContent += transcription + ' ';
+                            })
+                            .catch(error => {
+                                // Handle transcription error
+                                console.error('Error:', error);
+                            });
+                    };
+
+                    // Stop recording after a certain duration (e.g., 5 seconds)
+                    setTimeout(() => {
+                        mediaRecorder.stop();
+                    }, 5000); // Adjust the duration as needed
+                });
+            }
+        }
+
+        // Create an instance of the SpeechRecognizer class
+        const speechRecognizer = new SpeechRecognizer();
+
+        // Function to update transcription on the webpage
+        function updateTranscription(text) {
+            const transcriptionDiv = document.getElementById("transcription");
+            transcriptionDiv.innerText = text;
+        }
+
+        // Event listener for the startButton click
+        document.getElementById("startButton").addEventListener("click", () => {
+            // Get audio stream from user's microphone
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then((audioStream) => {
+                    // Transcribe audio stream
+                    speechRecognizer.transcribeAudio(audioStream)
+                        .then((transcription) => {
+                            // Update transcription on the webpage
+                            updateTranscription(transcription);
+                        })
+                        .catch((error) => {
+                            console.error("Error transcribing audio:", error);
+                        });
+                })
+                .catch((error) => {
+                    console.error("Error accessing microphone:", error);
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Speech To Text Example 1 </title>
+    <link href="tempalteStyleSheet.css" rel="stylesheet" />
+
+</head>
+<body>
+ 
+    <h1>Speech Recognition Example</h1>
+    <button id="startButton">Start Recording</button>
+    <div id="transcription"></div>
+
+    <script>
+
+        // Define a class for SpeechRecognizer
+        //נגדיר מחלקה לזיהוי דיבור
+        class SpeechRecognizer {
+            constructor() {
+                // Initialize speech recognition API
+                //נשתמש  בממשק אינטרנטי לתמלול  - שהדפדפנים מכירים ותומכים
+                this.speechRecognition = new webkitSpeechRecognition();
+                this.speechRecognition.continuous = false;//עוצר את התמלול כשהבן אדם מפסיק לדבר
+                this.speechRecognition.interimResults = false//מחזיר תמלול מלא בסוף - אם נהפוך ל True נקבל את התמלול תוך כדי
+                this.speechRecognition.lang = 'en-US';
+            }
+
+            //מתודות לשם התמלול עצמו - מקבל קליפ שמע לתלול
+            // Method to transcribe audio
+            transcribeAudio(audioClip) {
+                return new Promise((resolve, reject) => {
+                    // Start speech recognition
+                    //מערך של המילים המתומללות - המקרה המוצלח - התמלול הצליח
+                    this.speechRecognition.onresult = (event) => {
+                        const transcription = event.results[0][0].transcript;
+                        resolve(transcription);
+                    };
+                    //אם התמלול לא צלח - זריקת תקלה/חריגה
+                    this.speechRecognition.onerror = (event) => {
+                        reject(event.error);
+                    };
+
+                    // Start speech recognition with audio clip
+                    this.speechRecognition.start();
+                });
+            }
+        }
+
+        //נייצר מופע חדש של אובייקט מהמחלקה SpeechReconizer
+        // Create an instance of the SpeechRecognizer class
+        const speechRecognizer = new SpeechRecognizer();
+
+        //פונקציה לעדכון התמלול בעמוד
+        // Function to update transcription on the webpage
+        function updateTranscription(text) {
+            const transcriptionDiv = document.getElementById("transcription");
+            transcriptionDiv.innerText = text;
+        }
+
+        // Event listener for the startButton click
+        document.getElementById("startButton").addEventListener("click", () => {
+            // Simulate audio clip (you would replace this with actual audio data)
+            const audioClip = "Hello, how are you?";
+
+            // Transcribe audio clip
+            speechRecognizer.transcribeAudio(audioClip)
+                .then((transcription) => {
+                    // Update transcription on the webpage
+                    updateTranscription(transcription);
+                })
+                .catch((error) => {
+                    console.error("Error transcribing audio:", error);
+                });
+        });
+
+
+
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Change Color STT Example</title>
+   
+    <style>
+       
+        body {
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            margin:15px;
+            padding:15px;
+          
+        }
+        div{
+            display:flex;
+            flex-direction:column;
+            gap:20px;
+        }
+        section{
+           max-width:100%;
+            border:1px solid black;
+            width:100vh;
+            height:30vh;                                 
+        }
+    </style>
+</head>
+<body>
+    <h1>Please tap/click the screen/page so the system strat listening</h1>
+    <div id="results">
+        <section id="firstname"></section>
+        <section id="lastname"></section>
+        <section id="body"></section>
+        <section id="end"></section>
+        <section id="yellow"></section>
+    </div>
+    <p class="output"></p>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+﻿body,section, div  {
+    display:flex;
+   
+        
+}
+body {
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
+section, div {
+    flex-direction:row;
+    scroll-behavior:smooth;
+    border: 1px solid black;
+    max-width:500px;
+    max-height:250px;
+       
+}
+nav#controller{
+    position:sticky;
+   
+
+}

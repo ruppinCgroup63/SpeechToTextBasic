@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Dictate To A template Example</title>
+   
+    <style>
+        body,div{
+            display:flex;
+        }
+        body {
+            flex-direction:column;
+            justify-content:center;
+            align-items:center
+        }
+        div{
+            border:1px solid black;
+            max-width:100%;
+            max-height:90%;
+                      
+            
+        }
+    </style>
+</head>
+<body>
+    <h1>Please tap the screen so the system strat listening</h1>
+    <div id="results">
+        <section id="firstname"></section>
+        <section id="lastname"></section>
+        <section id="body"></section>
+        <section id="end"></section>
+        <section id="yellow"></section>
+    </div>
+    <p class="output"></p>
+
+    <script src="script.js"></script>
+</body>
+</html>
